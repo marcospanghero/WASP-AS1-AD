@@ -9,8 +9,8 @@
 % in_data.GNSS.pos_ned      GNSS-receiver position estimates in NED
 %                           coordinates [m]
 % in_data.GNSS.t            Time of GNSS measurements [s]
-% (in_data.GNSS.HDOP        GNSS Horizontal Dilution of Precision [-]) 
-% (in_data.GNSS.VDOP        GNSS Vertical Dilution of Precision [-]) 
+% (in_data.GNSS.HDOP        GNSS Horizontal Dilution of Precision [-])
+% (in_data.GNSS.VDOP        GNSS Vertical Dilution of Precision [-])
 % in_data.IMU.acc           Accelerometer measurements [m/s^2]
 % in_data.IMU.gyro          Gyroscope measurements [rad/s]
 % in_data.IMU.t             Time of IMU measurements [s]
@@ -56,7 +56,7 @@ out_data.delta_u_h=zeros(6,N);
 
 %% Information fusion
 ctr_gnss_data=1;
-ctr_speed_data=1; 
+ctr_speed_data=1;
 
 for k=2:N
     
@@ -81,81 +81,84 @@ for k=2:N
     
     y = in_data.GNSS.pos_ned(:,ctr_gnss_data);
     s = in_data.SPEEDOMETER.speed(ctr_speed_data);
+    y = [y' s 0 0];
     A = [0 1 0; 0 0 1];
-%---> y = ...put in code here for tasks 2-4, 
-%---> adding SPEEDOMETER data and holonomic constraints
+    %---> y = ...put in code here for tasks 2-4,
+    %---> adding SPEEDOMETER data and holonomic constraints
     Rn2p = get_Rb2p()*q2dcm(x_h(7:10))';
     zero2_1 = A*Rn2p*x_h(4:6); %17
     
-      
-    H_1 = [eye(3) zeros(3,12)];
     
-%---> H = ...put in code here for tasks 2-4. H should be a 6*15 matrix.
-%---> Hint:  Rn2p = get_Rb2p()*q2dcm(x_h(7:10))';
-        
-
-   
+    H_1 = [eye(3) zeros(3,12)];
+    H = [eye(3) zeros(3,3) zeros(3,9); zeros(3,3) Rn2p zeros(3,9)];
+    
+    %---> H = ...put in code here for tasks 2-4. H should be a 6*15 matrix.
+    %---> Hint:  Rn2p = get_Rb2p()*q2dcm(x_h(7:10))';
+    
+    
+    
     
     R_1 = settings.sigma_gps^2*eye(3);
-%---> R = ...put in code here for tasks 2-4
-%---> Hint: error standard deviations are in settings.sigma_speed and settings.sigma_non_holonomic
-    R_2 = settings.sigma_speed;
-    R_3 = settings.sigma_non_holonomic;
+    %---> R = ...put in code here for tasks 2-4
+    %---> Hint: error standard deviations are in settings.sigma_speed and settings.sigma_non_holonomic
+    R_2 = settings.sigma_speed^2;
+    R_3 = settings.sigma_non_holonomic^2*eye(2);
+    R = [R_1 zeros(3); zeros(1,3) R_2 zeros(1,2); zeros(2,4) R_3];
     
-%     ind = zeros(1,3); % index vector, describing available measurements     
-%     % Check if GNSS measurement is available
-%     if t(k)==in_data.GNSS.t(ctr_gnss_data)       
-%         ind(1:3) = 1;
-%         % Update GNSS data counter
-%         ctr_gnss_data=min(ctr_gnss_data+1,length(in_data.GNSS.t));
-%     end   
-%     
-        
-%---> Change needed for tasks 2-4, make sure you understand it...
-     ind = zeros(1,6);  % index vector, describing available measurements
-%      % Check if GNSS measurement is available
-     if t(k)==in_data.GNSS.t(ctr_gnss_data) 
-       if t(k)>settings.outagestart && t(k) < settings.outagestop && strcmp(settings.gnss_outage,'on')
+    %     ind = zeros(1,3); % index vector, describing available measurements
+    %     % Check if GNSS measurement is available
+    %     if t(k)==in_data.GNSS.t(ctr_gnss_data)
+    %         ind(1:3) = 1;
+    %         % Update GNSS data counter
+    %         ctr_gnss_data=min(ctr_gnss_data+1,length(in_data.GNSS.t));
+    %     end
+    %
+    
+    %---> Change needed for tasks 2-4, make sure you understand it...
+    ind = zeros(1,6);  % index vector, describing available measurements
+    %      % Check if GNSS measurement is available
+    if t(k)==in_data.GNSS.t(ctr_gnss_data)
+        if t(k)>settings.outagestart && t(k) < settings.outagestop && strcmp(settings.gnss_outage,'on')
             ind(1:3)=0;
-       else
-           ind(1:3)=1;
+        else
+            ind(1:3)=1;
         end
-%         
-%         % Update GNSS data counter
+        %
+        %         % Update GNSS data counter
         ctr_gnss_data=min(ctr_gnss_data+1,length(in_data.GNSS.t));
-     end
-%      if t(k)==in_data.SPEEDOMETER.t(ctr_speed_data)
-%         if strcmp(settings.speed_aiding,'on')
-%             ind(4)=1;
-%         end
-% %         
-% %         % Update SPEEDOMETER data counter
-%         ctr_speed_data=min(ctr_speed_data+1,length(in_data.SPEEDOMETER.t));
-%     end
-% %     
+    end
+    if t(k)==in_data.SPEEDOMETER.t(ctr_speed_data)
+        if strcmp(settings.speed_aiding,'on')
+            ind(4)=1;
+        end
+        % %
+        % %         % Update SPEEDOMETER data counter
+        ctr_speed_data=min(ctr_speed_data+1,length(in_data.SPEEDOMETER.t));
+    end
+    % %
     % Check which measurement models that should be used
-%     if strcmp(settings.non_holonomic,'on')
-%         ind(5:6)=1;
-%     end
-%--->    
+        if strcmp(settings.non_holonomic,'on')
+            ind(5:6)=1;
+        end
+    %--->
     ind=logical(ind);
-    H_1=H_1(ind,:);
+    H=H(ind,:);
     y=y(ind);
-    R_1=R_1(ind,ind);
+    R=R(ind,ind);
     
     % Calculate the Kalman filter gain.
-    K=(P*H_1')/(H_1*P*H_1'+R_1);
+    K=(P*H')/(H*P*H'+R);
     
     % Update the perturbation state estimate.
-    z=[zeros(9,1); delta_u_h]+K*(y-H_1(:,1:6)*x_h(1:6));
+    z=[zeros(9,1); delta_u_h]+K*(y'-H(:,1:6)*x_h(1:6));
     
     
-    H_3 = [ zeros(2,3) A*Rn2P zeros(2,9)];
+    H_3 = [ zeros(2,3) A*Rn2p zeros(2,9)];
     e_3 = R_3;
     y_3k = H_3*z + e_3;
     
     B = [ 1 0 0];
-    H_2 = [ zeros(1,3) B*Rn2P zeros(1,9) ];
+    H_2 = [ zeros(1,3) B*Rn2p zeros(1,9) ];
     e_2 = R_2;
     y_2k = H_2*z + e_2;
     
@@ -167,7 +170,7 @@ for k=2:N
     delta_u_h=z(10:15);
     
     % Update the Kalman filter state covariance.
-    P=(eye(15)-K*H_1)*P;
+    P=(eye(15)-K*H)*P;
     
     % Save the data to the output data structure
     out_data.x_h(:,k)=x_h;
