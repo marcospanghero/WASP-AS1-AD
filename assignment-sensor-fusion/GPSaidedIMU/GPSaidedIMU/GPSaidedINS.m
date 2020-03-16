@@ -87,13 +87,13 @@ for k=2:N
 %---> y = ...put in code here for tasks 2-4, 
 %---> adding SPEEDOMETER data and holonomic constraints
     H = [eye(6) zeros(6,9)];
-    H = [eye(3) zeros(3,3) zeros(3,9); zeros(3,3) get_Rb2p() zeros(3,9)];
     
 %---> H = ...put in code here for tasks 2-4. H should be a 6*15 matrix.
 %---> Hint:  
     A = [zeros(2,1) eye(2)];
     Rn2p = get_Rb2p()*q2dcm(x_h(7:10))';
-   
+    H = [eye(3) zeros(3,3) zeros(3,9); zeros(3,3) Rn2p zeros(3,9)];
+
     
     R = [settings.sigma_gps^2*eye(3) zeros(3,3) ; zeros(3,3) diag([settings.sigma_speed^2 settings.sigma_non_holonomic^2 settings.sigma_non_holonomic^2])];
 %---> R = ...put in code here for tasks 2-4
