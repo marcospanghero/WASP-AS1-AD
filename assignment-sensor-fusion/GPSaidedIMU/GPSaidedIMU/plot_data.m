@@ -3,7 +3,7 @@ function plot_data(in_data,out_data,holdon,settings)
 if nargin < 3; holdon = 'False'; end
 
 h=zeros(1,2);
-figure(1)
+fig = figure(1);
 tiledlayout(3,1,'TileSpacing','compact','Padding','compact')
 if ~holdon clf; end
 slowINS_x = decimate(out_data.x_h(2,:),100);
@@ -48,11 +48,12 @@ xlabel('Sample')
 ylabel('Error in m')
 legend(p, 'xError', 'yError')
 grid on
+print("img/error-dec",'-dpng');
 
 
 
 h=zeros(1,4);
-figure(2)
+fig = figure(2);
 if ~holdon clf; end
 plot(in_data.GNSS.pos_ned(2,:),in_data.GNSS.pos_ned(1,:),'b-');
 hold on
@@ -68,9 +69,10 @@ xlabel('East [m]')
 legend(h,'GNSS position estimate','GNSS aided INS trajectory','Start point')
 axis equal
 grid on
+print("img/error-trajectory",'-dpng');
 
 h=zeros(1,3);
-figure(3)
+fig = figure(3);
 if ~holdon clf; end
 h(1)=plot(in_data.GNSS.t,-in_data.GNSS.pos_ned(3,:),'b.');
 hold on
@@ -82,9 +84,11 @@ ylabel('Height [m]')
 xlabel('Time [s]')
 grid on
 legend(h,'GNSS estimate','GNSS aided INS estimate','3\sigma bound')
+print("img/error-gnss-height",'-dpng');
+
 
 h=zeros(1,2);
-figure(4)
+fig = figure(4);
 if ~holdon clf; end
 h(1)=plot(in_data.IMU.t,sqrt(sum(out_data.x_h(4:6,:).^2)),'r');
 hold on
@@ -116,7 +120,10 @@ for n=1:N
 end
 
 ylabels={'Roll [deg]','Pitch [deg]','Yaw [deg]'};
-figure(5)
+print("img/error-gnss-speed",'-dpng');
+
+
+fig = figure(5);
 if ~holdon clf; end
 h=zeros(1,2);
 for k=1:3
@@ -133,9 +140,10 @@ for k=1:3
 end
 xlabel('Time [s]')
 legend(h,'GNSS aided INS estimate','3\sigma bound')
+print("img/error-gnss-attitude",'-dpng');
 
 
-figure(6)
+fig = figure(6);
 if ~holdon clf; end
 ylabels={'X-axis bias [m/s^2]','Y-axis bias [m/s^2]','Z-axis bias [m/s^2]'};
 h=zeros(1,2);
@@ -153,9 +161,10 @@ for k=1:3
 end
 xlabel('Time [s]')
 legend(h,'GNSS aided INS estimate','3\sigma bound')
+print("img/error-error-acc-time",'-dpng');
 
 
-figure(7)
+fig = figure(7);
 if ~holdon clf; end
 ylabels={'X-axis bias [deg/s]','Y-axis bias [deg/s]','Z-axis bias [deg/s]'};
 h=zeros(1,2);
@@ -173,8 +182,10 @@ for k=1:3
 end
 xlabel('Time [s]')
 legend(h,'GNSS aided INS estimate','3\sigma bound')
+print("img/error-error-gyro-time",'-dpng');
 
-figure(8)
+
+fig = figure(8);
 if ~holdon clf; end
 xest = out_data.x_h(2,:);
 yest = out_data.x_h(1,:);
@@ -191,6 +202,7 @@ ylabel('position difference [m]')
 legend('x', 'y')
 
 positionerr_RMS = sqrt(mean(xerr.^2+yerr.^2))
-figure(2)
+print("img/ierror-error-position-diff",'-dpng');
+
 end
 
