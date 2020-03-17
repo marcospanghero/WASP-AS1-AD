@@ -81,12 +81,12 @@ for k=2:N
     
     y = in_data.GNSS.pos_ned(:,ctr_gnss_data);
     s = in_data.SPEEDOMETER.speed(ctr_speed_data);
-    y = [y' s 0 0];
+    y = [y' s 0 0]; %23
     A = [0 1 0; 0 0 1];
     %---> y = ...put in code here for tasks 2-4,
     %---> adding SPEEDOMETER data and holonomic constraints
     Rn2p = get_Rb2p()*q2dcm(x_h(7:10))';
-    zero2_1 = A*Rn2p*x_h(4:6); %17
+%     zero2_1 = A*Rn2p*x_h(4:6); %17
     
     
     H_1 = [eye(3) zeros(3,12)];
@@ -118,9 +118,7 @@ for k=2:N
     ind = zeros(1,6);  % index vector, describing available measurements
     %      % Check if GNSS measurement is available
     if t(k)==in_data.GNSS.t(ctr_gnss_data)
-        if t(k)>settings.outagestart && t(k) < settings.outagestop && strcmp(settings.gnss_outage,'on')
-            ind(1:3)=0;
-        else
+        if t(k)<settings.outagestart || t(k) > settings.outagestop || ~strcmp(settings.gnss_outage,'on')
             ind(1:3)=1;
         end
         %
