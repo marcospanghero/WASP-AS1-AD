@@ -17,8 +17,9 @@ function settings=get_settings()
 settings.gnss_outage = 'on'; 
 settings.outagestart = 200; 
 settings.outagestop = Inf;
-settings.non_holonomic = 'on';
+settings.non_holonomic = 'off';
 settings.speed_aiding = 'on';
+settings.savepath = 'outage-200-speed/';
 
 settings.init_heading = 320*pi/180;
 
@@ -36,9 +37,9 @@ settings.sigma_gyro_bias = 0.01*pi/180; % [rad/s^1.5]
 
 % GNSS position measurement noise covariance (R)
 % Standard deviations, need to be squared
-settings.sigma_gps = 0.5/sqrt(3); %[m] 
-settings.sigma_speed = 3.2; %[m/s]  Trim here
-settings.sigma_non_holonomic = 15; %[m/s] Trim here
+settings.sigma_gps = 0.3/sqrt(3); %[m] 
+settings.sigma_speed = 0.32; %[m/s]  Trim here
+settings.sigma_non_holonomic = 12; %[m/s] Trim here
 
 
 % Initial Kalman filter uncertainties (standard deviations)  

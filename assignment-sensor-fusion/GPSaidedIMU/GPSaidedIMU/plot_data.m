@@ -48,7 +48,7 @@ xlabel('Sample')
 ylabel('Error in m')
 legend(p, 'xError', 'yError')
 grid on
-print("img/error-dec",'-dpng');
+print("img/" + settings.savepath +"error-dec",'-dpng');
 
 
 
@@ -69,7 +69,7 @@ xlabel('East [m]')
 legend(h,'GNSS position estimate','GNSS aided INS trajectory','Start point')
 axis equal
 grid on
-print("img/error-trajectory",'-dpng');
+print("img/" + settings.savepath +"error-trajectory",'-dpng');
 
 h=zeros(1,3);
 fig = figure(3);
@@ -84,7 +84,7 @@ ylabel('Height [m]')
 xlabel('Time [s]')
 grid on
 legend(h,'GNSS estimate','GNSS aided INS estimate','3\sigma bound')
-print("img/error-gnss-height",'-dpng');
+print("img/" + settings.savepath +"error-gnss-height",'-dpng');
 
 
 h=zeros(1,2);
@@ -120,7 +120,7 @@ for n=1:N
 end
 
 ylabels={'Roll [deg]','Pitch [deg]','Yaw [deg]'};
-print("img/error-gnss-speed",'-dpng');
+print("img/" + settings.savepath +"error-gnss-speed",'-dpng');
 
 
 fig = figure(5);
@@ -140,7 +140,7 @@ for k=1:3
 end
 xlabel('Time [s]')
 legend(h,'GNSS aided INS estimate','3\sigma bound')
-print("img/error-gnss-attitude",'-dpng');
+print("img/" + settings.savepath +"error-gnss-attitude",'-dpng');
 
 
 fig = figure(6);
@@ -161,7 +161,7 @@ for k=1:3
 end
 xlabel('Time [s]')
 legend(h,'GNSS aided INS estimate','3\sigma bound')
-print("img/error-error-acc-time",'-dpng');
+print("img/" + settings.savepath +"error-error-acc-time",'-dpng');
 
 
 fig = figure(7);
@@ -182,7 +182,7 @@ for k=1:3
 end
 xlabel('Time [s]')
 legend(h,'GNSS aided INS estimate','3\sigma bound')
-print("img/error-error-gyro-time",'-dpng');
+print("img/" + settings.savepath +"error-error-gyro-time",'-dpng');
 
 
 fig = figure(8);
@@ -200,9 +200,12 @@ plot(in_data.IMU.t,yerr)
 xlabel('time [s]')
 ylabel('position difference [m]')
 legend('x', 'y')
+print("img/" + settings.savepath +"ierror-error-position-diff",'-dpng');
 
 positionerr_RMS = sqrt(mean(xerr.^2+yerr.^2))
-print("img/ierror-error-position-diff",'-dpng');
+fileID = fopen("img/" + settings.savepath +"err.txt",'w');
+fprintf(fileID,'positionerr_RMS = %f',positionerr_RMS);
+fclose(fileID);
 
 end
 

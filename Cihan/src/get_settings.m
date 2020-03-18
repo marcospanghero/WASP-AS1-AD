@@ -15,7 +15,8 @@ function settings=get_settings()
 %%              GENERAL PARAMETERS         %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 settings.gnss_outage = 'on'; 
-settings.outagestart = 200; settings.outagestop = 275;
+settings.outagestart = 200; 
+settings.outagestop = 275;
 settings.non_holonomic = 'on';
 settings.speed_aiding = 'on';
 

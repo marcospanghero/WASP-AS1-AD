@@ -25,7 +25,7 @@ out_data=GPSaidedINS(in_data,settings);
 disp('Plot data')
 plot_data(in_data,out_data,'True',settings);drawnow
 
-
+close all;
 
 
 
