@@ -31,8 +31,8 @@ data_dropped.head()
 FEATURES = features
 LABELS = labels.values
 
-import ipdb
-ipdb.set_trace()
+# import ipdb
+# ipdb.set_trace()
 
 X_embedded = TSNE(n_components=2).fit_transform(FEATURES)
 
@@ -42,11 +42,13 @@ X_embedded = TSNE(n_components=2).fit_transform(FEATURES)
 # RanFor.fit(x_train,y_train)
 # print("Train score is: {}".format(accuracy_score(y_train,RanFor.predict(x_train))))
 # print("Test score {}".format(accuracy_score(y_test,RanFor.predict(x_test))))
+STR_LABELS = list(map(mode_dict.get, list(LABELS)))
 import seaborn as sns
 sns.set(rc={'figure.figsize': (11.7, 8.27)})
 palette = sns.color_palette("bright", 3)
 sns.scatterplot(X_embedded[:, 0],
                 X_embedded[:, 1],
-                hue=LABELS,
+                hue=STR_LABELS,
                 legend='full',
                 palette=palette)
+plt.show()
