@@ -30,25 +30,41 @@ data_dropped.head()
 
 FEATURES = features
 LABELS = labels.values
-
-# import ipdb
-# ipdb.set_trace()
-
-X_embedded = TSNE(n_components=2).fit_transform(FEATURES)
-
-# x_train,x_test,y_train,y_test=train_test_split(FEATURES,LABELS,test_size=0.3,random_state=1)
-# RanFor=RandomForestClassifier(n_estimators=100,random_state=1)
-
-# RanFor.fit(x_train,y_train)
-# print("Train score is: {}".format(accuracy_score(y_train,RanFor.predict(x_train))))
-# print("Test score {}".format(accuracy_score(y_test,RanFor.predict(x_test))))
 STR_LABELS = list(map(mode_dict.get, list(LABELS)))
-import seaborn as sns
-sns.set(rc={'figure.figsize': (11.7, 8.27)})
-palette = sns.color_palette("bright", 3)
-sns.scatterplot(X_embedded[:, 0],
-                X_embedded[:, 1],
-                hue=STR_LABELS,
-                legend='full',
-                palette=palette)
-plt.show()
+
+# PLOT FOR T-SNE PROJECTION IN 2 D
+# import seaborn as sns
+# sns.set(rc={'figure.figsize': (11.7, 8.27)})
+# palette = sns.color_palette("bright", 3)
+# sns.scatterplot(X_embedded[:, 0],
+#                 X_embedded[:, 1],
+#                 hue=STR_LABELS,
+#                 legend='full',
+#                 palette=palette)
+# plt.show()
+
+# PLOT FOR T-SNE PROJECTION IN 3 D
+
+X_embedded = TSNE(n_components=3).fit_transform(FEATURES)
+index = ['primary component', 'secondary component', 'third component']
+df_embedded = pd.DataFrame({
+    'primary component': X_embedded[:, 0],
+    'secondary component': X_embedded[:, 1],
+    'third component': X_embedded[:, 2]
+})
+df_embedded.insert(3, "mode", STR_LABELS, True)
+df_embedded.head()
+
+import ipdb
+ipdb.set_trace()
+
+import plotly.express as px
+fig = px.scatter_3d(df_embedded,
+                    x='primary component',
+                    y='secondary component',
+                    z='third component',
+                    color='mode')
+fig.show()
+
+import ipdb
+ipdb.set_trace()
