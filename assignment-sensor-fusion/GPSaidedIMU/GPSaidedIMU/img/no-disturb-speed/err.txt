@@ -1,1 +1,0 @@
-positionerr_RMS = 0.761248
