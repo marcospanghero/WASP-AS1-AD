@@ -8,6 +8,7 @@ The assignment we need to do is more than that, we need to classify standing, wa
 
 * pandas
 * sklearn
+* seaborn (for visualization)
 * matplotlib (for visualization)
 
 ## read data from the log file and save the corresponding label
@@ -25,3 +26,5 @@ To be mentioned, the log file saved by the sensor fusion app, saves the data in 
 
 Run `activity-recognition.ipynb` cell by cell, allows you build the dataset for standing/walking/running activity recognition, and train with random forest in `sklearn`, with a high prediction accuracy on the test set.
 
+## visualization 
+Run `t-sne dimensionality reduction and visualization.ipynb` to visualize the data
